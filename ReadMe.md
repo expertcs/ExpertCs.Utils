@@ -1,8 +1,8 @@
 ﻿# ExpertCs.Utils
 
-Helpful utilities and classes
-The library will be extended
-Use at your own risk
+#### Helpful utilities and classes
+#### The library will be extended
+#### Use at your own risk
 
 ## StringHelper.FormatWithExpressions - interpolates an input string using expressions calculated for a given object.
 ```C#
