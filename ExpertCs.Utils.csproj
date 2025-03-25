@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <PackageId>ExpertCs.Utils</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>ExpertCs</Authors>
+    <Description>Helpful utilities and classes</Description>
+    <PackageTags>math, helper, utilities</PackageTags>
+    <RepositoryUrl>https://github.com/ExpertCs/ExpertCs.Utils</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>Helpful utilities and classes</Title>
+    <PackageReadmeFile>ReadMe.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/ExpertCs/ExpertCs.Utils</PackageProjectUrl>
+    <PackAsTool>True</PackAsTool>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Linq.Dynamic" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ReadMe.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
