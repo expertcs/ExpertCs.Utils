@@ -10,7 +10,7 @@
 /// Интерполирует входную строку используя выражения вычесленные для заданного объекта.
 /// </summary>
 /// <example>
-/// var s = "p1={IntField,10:n2}, p2={StrPop}, p3={IntField}, p4={(DateProp.Year+5):n2}, p5={DateProp:g}, 10={7+3}, p7={GetType().Name}, p8={DArray[1]:p2}";
+/// var s = "p1={IntField,10:n2}, p2={StrProp}, p3={IntField}, p4={(DateProp.Year+5):n2}, p5={DateProp:g}, 10={7+3}, p7={GetType().Name}, p8={DArray[1]:p2}";
 ///
 /// var c = new
 /// {

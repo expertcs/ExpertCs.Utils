@@ -5,27 +5,27 @@ namespace ExpertCs.Utils;
 /// <summary>
 /// Extensions for working with excetions.
 /// </summary>
-public static class ExcetionExtentions
+public static class ExceptionExtentions
 {
     /// <summary>
     /// Игнорирует исключение возникающее в вызываемой функции
     /// </summary>
     /// <typeparam name="T">Тип результата</typeparam>
-    /// <typeparam name="TExcection">Тип игнориуемого исключения</typeparam>
+    /// <typeparam name="TException">Тип игнориуемого исключения</typeparam>
     /// <param name="func">Вызываемая функция</param>
     /// <param name="exceptionResultFunc">Функция вызыватся в случае возникновения исключения</param>
     /// <returns></returns>
-    public static T? RunIgnoreException<T, TExcection>(this Func<T> func, Func<T>? exceptionResultFunc = default)
-        where TExcection : Exception
+    public static T? InvokeIgnoreException<T, TException>(this Func<T?> func, Func<TException, T?>? exceptionResultFunc = default)
+        where TException : Exception
     {
         try
         {
             return func();
         }
-        catch (TExcection)
+        catch (TException ex)
         {
             if (exceptionResultFunc != null)
-                return exceptionResultFunc();
+                return exceptionResultFunc(ex);
             return default;
         }
     }
@@ -37,28 +37,26 @@ public static class ExcetionExtentions
     /// <param name="func">Вызываемая функция</param>
     /// <param name="exceptionResultFunc">Функция вызыватся в случае возникновения исключения</param>
     /// <returns></returns>
-    public static T? RunIgnoreException<T>(this Func<T> func, Func<T>? exceptionResultFunc = default)
-        => func.RunIgnoreException<T, Exception>(exceptionResultFunc);
+    public static T? InvokeIgnoreException<T>(this Func<T?> func, Func<Exception, T?>? exceptionResultFunc = default)
+        => func.InvokeIgnoreException<T, Exception>(exceptionResultFunc);
 
     /// <summary>
     /// Игнорирует исключение возникающее в вызываемой функции
     /// </summary>
-    /// <typeparam name="TExcection">Тип игнориуемого исключения</typeparam>
+    /// <typeparam name="TException">Тип игнориуемого исключения</typeparam>
     /// <param name="action">Вызываемая функция</param>
-    public static void RunIgnoreException<TExcection>(this Action action)
-        where TExcection : Exception
-    {
-        var func = () =>
+    public static void InvokeIgnoreException<TException>(this Action action)
+        where TException : Exception
+        => _ = new Func<object?>(() =>
         {
             action();
-            return default(object)!;
-        };
-        func.RunIgnoreException<object, TExcection>();
-    }
+            return default;
+        }).InvokeIgnoreException<object, TException>();
 
     /// <summary>
     /// Игнорирует исключение возникающее в вызываемой функции
     /// </summary>
     /// <param name="action">Вызываемая функция</param>
-    public static void RunIgnoreException(this Action action) => action.RunIgnoreException<Exception>();
+    public static void InvokeIgnoreException(this Action action)
+        => action.InvokeIgnoreException<Exception>();
 }
