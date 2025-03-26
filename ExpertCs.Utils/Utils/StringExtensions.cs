@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ExpertCs.Utils;
 /// <summary>
 /// Extensions for working with strings.
 /// </summary>
-public static partial class StringHelper
+public static partial class StringExtensions
 {
 
     /// <summary>
@@ -28,43 +29,37 @@ public static partial class StringHelper
     ///     DArray = new decimal[] { 2m, 4.3m, 7m }
     /// };
     /// 
-    /// var ret1 = ExpertCs.StringUtils.StringHelper.FormatWithExpressions(c, s);
+    /// var ret1 = ExpertCs.StringExtensions.GetInterpolatedString(c, s);
     ///
-    /// var ret2 = c.FormatWithExpressions(s, System.Globalization.CultureInfo.GetCultureInfo("en"));
+    /// var ret2 = c.GetInterpolatedString(s, System.Globalization.CultureInfo.GetCultureInfo("en"));
     /// </example>
     /// <param name="contextObject">Объект.</param>
-    /// <param name="interpolatedExpression">Выражение для форматирования.</param>
+    /// <param name="template">Выражение для форматирования.</param>
     /// <param name="formatProvider"></param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="FormatException"></exception>
     /// <returns></returns>
-    public static string FormatWithExpressions(
+    public static string GetInterpolatedString(
         this object? contextObject,
-        string interpolatedExpression,
+        string template,
         IFormatProvider? formatProvider = null)
     {
         if (contextObject == null)
             contextObject = EmptyObject;
         var cache = _caches.GetOrAdd(contextObject.GetType(), _ => new());
-        return cache.Interpolate(contextObject, interpolatedExpression, formatProvider);
+        return cache.Interpolate(contextObject, template, formatProvider);
     }
 
     private static readonly object EmptyObject = new();
 
     private static readonly ConcurrentDictionary<Type, TypeTemplateCache> _caches = new();
 
-    [DebuggerDisplay("{Format}")]
-    private class TemplateCache()
-    {
-        public required string Format { get; init; }
-
-        public required Parameter[] Parameters { get; init; }
-    }
+    private record TemplateCache(string Format, Parameter[] Parameters);
 
     [DebuggerDisplay("{Expression}")]
-    private class Parameter
+    private class Parameter(string expression)
     {
-        public required string Expression { get; init; }
+        public string Expression { get; } = expression;
 
         private Delegate? _delegate;
 
@@ -110,21 +105,20 @@ public static partial class StringHelper
         private TemplateCache GetTemplate(string cache)
             => _tempates.GetOrAdd(cache, t =>
             {
-                var para = new ConcurrentDictionary<Parameter, int>();
+                var para = new Dictionary<Parameter, int>();
                 var format = _regex.Replace(t, m => MatchEval(m, para));
-                return new TemplateCache
-                {
-                    Format = format,
-                    Parameters = para.OrderBy(p => p.Value).Select(p => p.Key).ToArray()
-                };
+                return new TemplateCache(
+                    format,
+                    para.OrderBy(p => p.Value).Select(p => p.Key).ToArray());
             });
 
-        private string MatchEval(Match m, ConcurrentDictionary<Parameter, int> para)
+        private string MatchEval(Match m, Dictionary<Parameter, int> para)
         {
             var gr = m.Groups.Cast<Group>().Select(g => g.Value.Trim()).ToArray();
             var expression = $"{gr[1]}{gr[2]}";
-            var p = _parameters.GetOrAdd(expression, _ => new Parameter { Expression = expression });
-            var index = para.GetOrAdd(p, _ => para.Count);
+            var p = _parameters.GetOrAdd(expression, e => new Parameter(e));
+            if (!para.TryGetValue(p, out var index))
+                index = para[p] = para.Count;
             var z = m.Value.Trim();
             return $"{z.First()}{index}{z.Last()}";
         }

@@ -8,7 +8,7 @@ namespace ExpertCs.Utils;
 /// <summary>
 /// Extensions for working with reflection.
 /// </summary>
-public static class ReflectionExtentions
+public static class ReflectionExtensions
 {
     private static object? GetRuntimePropertyValue(this object? obj, IEnumerable<string> properties)
     {

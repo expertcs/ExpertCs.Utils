@@ -1,15 +1,15 @@
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace ExpertCs.Utils.Test.Utils;
 
-public class TestClass1
+public class StringExtensionsTests2
 {
-    public int Id;
-    public string? Name;
-}
+    public class TestClass1
+    {
+        public int Id;
+        public string? Name;
+    }
 
-public class StringHelperTest
-{
     [TestCase(1, "HeLLo")]
     [TestCase(100500, "wOrlD")]
     public void TestFormatWithExpressions(int Id, string Name)
@@ -36,7 +36,7 @@ public class StringHelperTest
     {
         Console.Write(expect);
         Console.Write(" - ");
-        var actual = obj.FormatWithExpressions(temp);
+        var actual = obj.GetInterpolatedString(temp);
         Console.WriteLine(actual);
         Assert.That(actual, Is.EqualTo(expect));
     }
@@ -54,12 +54,12 @@ public class StringHelperTest
             DArray = new decimal[] { 2m, 4.3m, 7m }
         };
 
-        var actual = c.FormatWithExpressions(s, CultureInfo.GetCultureInfo("ru"));
-        var expect = "p1=      5,00, p2=-test text-, p3=5, p4=2�030,00, p5=26.03.2025 03:05, 10=10, p7=<>f__AnonymousType0`4, p8=430,00 %";
+        var actual = c.GetInterpolatedString(s, CultureInfo.GetCultureInfo("ru"));
+        var expect = "p1=      5,00, p2=-test text-, p3=5, p4=2 030,00, p5=26.03.2025 03:05, 10=10, p7=<>f__AnonymousType0`4, p8=430,00 %";
         Assert.That(actual, Is.EqualTo(expect));
 
 
-        actual = c.FormatWithExpressions(s, CultureInfo.GetCultureInfo("en"));
+        actual = c.GetInterpolatedString(s, CultureInfo.GetCultureInfo("en"));
         expect = "p1=      5.00, p2=-test text-, p3=5, p4=2,030.00, p5=3/26/2025 3:05 AM, 10=10, p7=<>f__AnonymousType0`4, p8=430.00%";
         Assert.That(actual, Is.EqualTo(expect));
     }

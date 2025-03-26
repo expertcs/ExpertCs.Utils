@@ -5,7 +5,7 @@ namespace ExpertCs.Utils;
 /// <summary>
 /// Extensions for working with excetions.
 /// </summary>
-public static class ExceptionExtentions
+public static class ExceptionExtensions
 {
     /// <summary>
     /// Игнорирует исключение возникающее в вызываемой функции

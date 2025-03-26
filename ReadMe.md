@@ -1,10 +1,11 @@
 ﻿# ExpertCs.Utils
 
-#### Helpful utilities and classes
-#### The library will be extended
-#### Use at your own risk
+- Helpful utilities and classes
+- The library will be extended
+- Use at your own __risk__
 
-## StringHelper.FormatWithExpressions - interpolates an input string using expressions calculated for a given object.
+<a id="GetInterpolatedString"></a>
+## ExpertCs.Utils.StringExtensions.GetInterpolatedString - interpolates an input string using expressions calculated for a given object.
 ```C#
 /// <summary>
 /// Интерполирует входную строку используя выражения вычесленные для заданного объекта.
@@ -20,9 +21,9 @@
 ///     DArray = new decimal[] { 2m, 4.3m, 7m }
 /// };
 /// 
-/// var ret1 = ExpertCs.StringUtils.StringHelper.FormatWithExpressions(c, s);
+/// var ret1 = ExpertCs.Utils.StringExtensions.GetInterpolatedString(c, s);
 ///
-/// var ret2 = c.FormatWithExpressions(s, System.Globalization.CultureInfo.GetCultureInfo("en"));
+/// var ret2 = c.GetInterpolatedString(s, System.Globalization.CultureInfo.GetCultureInfo("en"));
 /// </example>
 /// <param name="contextObject">Объект.</param>
 /// <param name="interpolatedExpression">Выражение для форматирования.</param>
@@ -36,4 +37,6 @@ public static string FormatWithExpressions(
     IFormatProvider? formatProvider = null)
 ```
 
-Полезный метод
+[Полезный метод](#GetInterpolatedString)
+
+Есть ещё много полезного
