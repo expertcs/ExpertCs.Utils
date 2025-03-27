@@ -4,16 +4,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageId>ExpertCs.Utils</PackageId>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
     <Authors>ExpertCs</Authors>
     <Description>Helpful utilities and classes</Description>
-    <PackageTags>math, helper, utilities</PackageTags>
+    <PackageTags>helper, utilities</PackageTags>
     <RepositoryUrl>https://github.com/ExpertCs/ExpertCs.Utils</RepositoryUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>Helpful utilities and classes</Title>
     <PackageProjectUrl>https://github.com/ExpertCs/ExpertCs.Utils</PackageProjectUrl>
-    <PackAsTool>True</PackAsTool>
+    <PackAsTool>False</PackAsTool>
     <IncludeSymbols>True</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
