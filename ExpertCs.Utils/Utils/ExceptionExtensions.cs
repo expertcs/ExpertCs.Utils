@@ -3,7 +3,7 @@
 namespace ExpertCs.Utils;
 
 /// <summary>
-/// Extensions for working with excetions.
+/// Extensions for working with exceptions.
 /// </summary>
 public static class ExceptionExtensions
 {
@@ -15,7 +15,7 @@ public static class ExceptionExtensions
     /// <param name="func">Вызываемая функция</param>
     /// <param name="exceptionResultFunc">Функция вызыватся в случае возникновения исключения</param>
     /// <returns></returns>
-    public static T? InvokeIgnoreException<T, TException>(this Func<T?> func, Func<TException, T?>? exceptionResultFunc = default)
+    public static T? InvokeIgnoreException<T, TException>(this Func<T?> func, Func<TException, T?>? exceptionResultFunc = null)
         where TException : Exception
     {
         try
@@ -37,7 +37,7 @@ public static class ExceptionExtensions
     /// <param name="func">Вызываемая функция</param>
     /// <param name="exceptionResultFunc">Функция вызыватся в случае возникновения исключения</param>
     /// <returns></returns>
-    public static T? InvokeIgnoreException<T>(this Func<T?> func, Func<Exception, T?>? exceptionResultFunc = default)
+    public static T? InvokeIgnoreException<T>(this Func<T?> func, Func<Exception, T?>? exceptionResultFunc = null)
         => func.InvokeIgnoreException<T, Exception>(exceptionResultFunc);
 
     /// <summary>
@@ -50,7 +50,7 @@ public static class ExceptionExtensions
         => _ = new Func<object?>(() =>
         {
             action();
-            return default;
+            return null;
         }).InvokeIgnoreException<object, TException>();
 
     /// <summary>

@@ -12,16 +12,17 @@ public static class ReflectionExtensions
 {
     private static object? GetRuntimePropertyValue(this object? obj, IEnumerable<string> properties)
     {
-        if (obj == default)
-            return default;
-        var first = properties.FirstOrDefault();
+        if (obj == null)
+            return null;
+        var arr = properties as string[] ?? properties.ToArray();
+        var first = arr.FirstOrDefault();
         if (string.IsNullOrWhiteSpace(first))
             return obj;
 
         var prop = obj.GetType().GetRuntimeProperty(first);
         var value = prop?.GetValue(obj, null);
 
-        return value.GetRuntimePropertyValue(properties.Skip(1));
+        return value.GetRuntimePropertyValue(arr.Skip(1));
     }
 
     /// <summary>

@@ -44,8 +44,7 @@ public static partial class StringExtensions
         string template,
         IFormatProvider? formatProvider = null)
     {
-        if (contextObject == null)
-            contextObject = EmptyObject;
+        contextObject ??= EmptyObject;
         var cache = _caches.GetOrAdd(contextObject.GetType(), _ => new());
         return cache.Interpolate(contextObject, template, formatProvider);
     }
@@ -72,7 +71,7 @@ public static partial class StringExtensions
             var type = obj.GetType();
             try
             {
-                _delegate ??= DynamicExpression.ParseLambda(type, default, Expression).Compile(true);
+                _delegate ??= DynamicExpression.ParseLambda(type, null, Expression).Compile(true);
                 return _delegate.DynamicInvoke(obj);
             }
             catch (Exception ex)
@@ -91,9 +90,9 @@ public static partial class StringExtensions
         private const string PATTERN = @"\{(.*?)(\(.*?\))*(}|\:|,)";
         private static readonly Regex _regex = new(PATTERN);
 
-        internal string Interpolate(object obj, string tempate, IFormatProvider? formatProvider)
+        internal string Interpolate(object obj, string template, IFormatProvider? formatProvider)
         {
-            var cache = GetTemplate(tempate);
+            var cache = GetTemplate(template);
             return string.Format(
                 formatProvider,
                 cache.Format,
