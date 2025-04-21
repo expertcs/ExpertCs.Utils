@@ -227,9 +227,7 @@ public class DictionaryToObjectConverter
         {
             try
             {
-                var pathParts = kvp.Key.Split(':')
-                    .Select(UnescapeKeyPart)
-                    .ToArray();
+                var pathParts = kvp.Key.Split(':').ToArray();
 
                 var valueNode = ParseValue(kvp.Value);
                 SetValueAtPath(root, pathParts, valueNode);
@@ -318,7 +316,7 @@ public class DictionaryToObjectConverter
         name = null;
         index = null;
 
-        int openBracket = part.IndexOf('[');
+        var openBracket = part.IndexOf('[');
         if (openBracket < 0 || !part.EndsWith("]"))
             return false;
 
@@ -393,83 +391,6 @@ public class DictionaryToObjectConverter
         if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out double doubleValue))
             return JsonValue.Create(doubleValue);
 
-        return JsonValue.Create(UnescapeString(value));
-    }
-
-    /// <summary>
-    /// Удаляет экранирование из строки
-    /// </summary>
-    /// <param name="value">Экранированная строка</param>
-    /// <returns>Неэкранированная строка</returns>
-    private static string UnescapeString(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-            return value;
-
-        var sb = new StringBuilder(value.Length);
-        var escape = false;
-
-        foreach (var c in value)
-        {
-            if (escape)
-            {
-                sb.Append(c switch
-                {
-                    '\\' => '\\',
-                    '"' => '\"',
-                    'n' => '\n',
-                    'r' => '\r',
-                    't' => '\t',
-                    ':' => ':',
-                    '[' => '[',
-                    ']' => ']',
-                    _ => c
-                });
-                escape = false;
-            }
-            else if (c == '\\')
-            {
-                escape = true;
-            }
-            else
-            {
-                sb.Append(c);
-            }
-        }
-
-        return sb.ToString();
-    }
-
-    /// <summary>
-    /// Удаляет экранирование из части ключа
-    /// </summary>
-    /// <param name="keyPart">Экранированная часть ключа</param>
-    /// <returns>Неэкранированная часть ключа</returns>
-    private static string UnescapeKeyPart(string keyPart)
-    {
-        if (string.IsNullOrEmpty(keyPart))
-            return keyPart;
-
-        var sb = new StringBuilder(keyPart.Length);
-        var escape = false;
-
-        foreach (var c in keyPart)
-        {
-            if (escape)
-            {
-                sb.Append(c);
-                escape = false;
-            }
-            else if (c == '\\')
-            {
-                escape = true;
-            }
-            else
-            {
-                sb.Append(c);
-            }
-        }
-
-        return sb.ToString();
+        return JsonValue.Create(value);
     }
 }

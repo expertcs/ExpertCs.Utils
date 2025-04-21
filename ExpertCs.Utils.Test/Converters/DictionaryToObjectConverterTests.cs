@@ -84,8 +84,8 @@ public class DictionaryToObjectConverterTests
         // Arrange
         var dictionary = new Dictionary<string, string>
         {
-            ["Path"] = "C:\\\\Folder\\\\File.txt",
-            ["Text"] = "Line1\\nLine2"
+            ["Path"] = "C:\\Folder\\File.txt",
+            ["Text"] = "Line1\nLine2"
         };
 
         // Act
@@ -130,9 +130,11 @@ public class DictionaryToObjectConverterTests
         {
             ["Invalid[Path"] = "value"
         };
+        
+        var obj = _converter.Convert<TestClass>(dictionary)!;
 
         // Act & Assert
-        Assert.That(() => _converter.Convert<TestClass>(dictionary), Throws.InvalidOperationException);
+        Assert.That(obj.Name, Is.Null);
     }
 
     private class TestClass

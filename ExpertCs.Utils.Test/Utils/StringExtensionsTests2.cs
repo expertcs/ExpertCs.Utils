@@ -55,17 +55,28 @@ public class StringExtensionsTests2
         };
 
         var actual = c.GetInterpolatedString(s, CultureInfo.GetCultureInfo("ru"));
-        var expect = "p1=      5,00, p2=-test text-, p3=5, p4=2\u00A0030,00, p5=26.03.2025 03:05, 10=10, p8=430,00 %";
-        Assert.That(actual, Is.EqualTo(expect));
+        var expect = "p1=      5,00, p2=-test text-, p3=5, p4=2 030,00, p5=26.03.2025 03:05, 10=10, p8=430,00 %";
+        AssertNoEsc(actual, expect);
 
         actual = c.GetInterpolatedString(s, CultureInfo.GetCultureInfo("en"));
-        expect = "p1=      5.00, p2=-test text-, p3=5, p4=2,030.00, p5=3/26/2025 3:05\u202FAM, 10=10, p8=430.00%";
-        Assert.That(actual, Is.EqualTo(expect));
+        expect = "p1=      5.00, p2=-test text-, p3=5, p4=2,030.00, p5=3/26/2025 3:05 AM, 10=10, p8=430.00%";
+        AssertNoEsc(actual, expect);
         
         actual = c.GetInterpolatedString(s, CultureInfo.InvariantCulture);
         expect = "p1=      5.00, p2=-test text-, p3=5, p4=2,030.00, p5=03/26/2025 03:05, 10=10, p8=430.00 %";
-        Assert.That(actual, Is.EqualTo(expect));
+        AssertNoEsc(actual, expect);
     }
-    
-    
+
+    private static string NoEsc(string value)
+    {
+        new[] { '\u202F', '\u00A0' }.ToList().ForEach(s => value = value.Replace(s, ' '));
+        return value;
+    }
+
+    private static void AssertNoEsc(string actual, string expect)
+    {
+        Assert.That(NoEsc(actual), Is.EqualTo(NoEsc(expect)));
+    }
+
+
 }

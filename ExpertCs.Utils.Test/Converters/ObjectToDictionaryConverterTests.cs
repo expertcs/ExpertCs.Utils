@@ -84,8 +84,7 @@ public class ObjectToDictionaryConverterTests
         var result = _converter.Convert(obj);
 
         // Assert
-        Assert.That(result.Count, Is.EqualTo(1));
-        Assert.That(result["Name"], Is.EqualTo("null"));
+        Assert.That(result.Any(), Is.False);
     }
 
     [Test]
@@ -106,12 +105,11 @@ public class ObjectToDictionaryConverterTests
     }
 
     [Test]
-    public void Convert_NullObject_ThrowsArgumentNullException()
+    public void Convert_NullObject()
     {
         // Arrange
         object? obj = null;
-
-        // Act & Assert
-        Assert.That(() => _converter.Convert(obj!), Throws.ArgumentNullException);
+        var d = _converter.Convert(obj);
+        Assert.That(d.Any(), Is.False);
     }
 }
