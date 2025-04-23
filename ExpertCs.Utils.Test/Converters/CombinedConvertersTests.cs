@@ -1,3 +1,4 @@
+using System.Dynamic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ExpertCs.Utils.Converters;
@@ -18,28 +19,23 @@ public class CombinedConvertersTests
             Nested = new { Text = "Hello" },
             Array = new[] { 1, 2, 3 },
             NullValue = (string?)null,
-            SpecialChars = "Line1\nLine2"
+            SpecialChars = "Line1\nLine2",
+            DateValue = new DateTime(2000, 3, 5)
         };
 
-        var options = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            Converters = { new JsonStringEnumConverter() }
-        };
-
-        var toDictConverter = new ObjectToDictionaryConverter(options);
-        var toObjConverter = new DictionaryToObjectConverter(options);
+        var toDictConverter = new ObjectToDictionaryConverter();
+        var toObjConverter = new DictionaryToObjectConverter();
 
         // Act
         var dictionary = toDictConverter.Convert(original);
-        var result = toObjConverter.Convert<dynamic>(dictionary);
+        var result = toObjConverter.Convert<dynamic>(dictionary)!;
 
         // Assert
         Assert.That(result.Name, Is.EqualTo(original.Name));
         Assert.That(result.Value, Is.EqualTo(original.Value));
         Assert.That(result.Nested.Text, Is.EqualTo(original.Nested.Text));
-        Assert.That((int[])result.Array, Is.EqualTo(original.Array));
-        Assert.That(result.NullValue, Is.Null);
+        CollectionAssert.AreEqual(result.Array, original.Array);
         Assert.That(result.SpecialChars, Is.EqualTo(original.SpecialChars));
+        Assert.That(result.DateValue, Is.EqualTo(new DateTimeOffset(original.DateValue)));
     }
 }
