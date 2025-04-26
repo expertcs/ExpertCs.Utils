@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PackageId>ExpertCs.Utils</PackageId>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <Authors>ExpertCs</Authors>
     <Description>Helpful utilities and classes</Description>
     <PackageTags>helper, utilities</PackageTags>

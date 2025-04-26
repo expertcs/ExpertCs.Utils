@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -21,15 +22,12 @@ public class DictionaryToObjectConverter
     /// </summary>
     /// <param name="options"></param>
     public DictionaryToObjectConverter(JsonSerializerOptions? options = null)
-    {
-        _deserializerOptions = options
-            ?? new()
-            {
-                PropertyNameCaseInsensitive = true,
-                NumberHandling = JsonNumberHandling.AllowReadingFromString,
-                Converters = { new JsonStringEnumConverter() }
-            };
-    }
+         => _deserializerOptions = options ?? new()
+         {
+             PropertyNameCaseInsensitive = true,
+             NumberHandling = JsonNumberHandling.AllowReadingFromString,
+             Converters = { new JsonStringEnumConverter() }
+         };
 
     /// <summary>
     /// Преобразует словарь строк в объект указанного типа
@@ -41,19 +39,19 @@ public class DictionaryToObjectConverter
     /// <exception cref="InvalidOperationException">При ошибке десериализации</exception>
     public T? Convert<T>(Dictionary<string, string>? dictionary)
     {
-        if(dictionary == null)
+        if (dictionary == null)
             return default;
 
         try
         {
             var jsonObject = BuildJsonObject(dictionary);
-            return TryConvertObject<T>(jsonObject, out var result) 
+            return TryConvertObject<T>(jsonObject, out var result)
                 ? result
                 : jsonObject.Deserialize<T>(_deserializerOptions);
         }
         catch (JsonException ex)
         {
-            throw new InvalidOperationException("Ошибка десериализации JSON объекта", ex);
+            throw new SerializationException("Ошибка десериализации JSON объекта", ex);
         }
     }
 
@@ -65,7 +63,7 @@ public class DictionaryToObjectConverter
             return true;
         }
         result = default;
-        var types = new[]{typeof(object), typeof(ExpandoObject)};
+        var types = new[] { typeof(object), typeof(ExpandoObject) };
         if (types.Contains(typeof(T)))
         {
             var ret = jsonObject.Deserialize<ExpandoObject>(_deserializerOptions)!;
@@ -76,7 +74,7 @@ public class DictionaryToObjectConverter
 
         return false;
     }
-    
+
     private void UpdateExpandoObject(ExpandoObject? obj)
     {
         if (obj == null)
@@ -107,7 +105,7 @@ public class DictionaryToObjectConverter
                     var item = GetValue(arrayElement);
                     list.Add(item);
                 }
-                var ret= list.ToArray();
+                var ret = list.ToArray();
                 var types = list.Select(x => x?.GetType()).Distinct().ToArray();
                 if (types.Length == 1)
                 {
@@ -210,13 +208,13 @@ public class DictionaryToObjectConverter
             {
                 var array = GetOrCreateArray(parent, arrayName!);
                 EnsureArraySize(array, arrayIndex!.Value);
-                
+
                 if (array[arrayIndex.Value] is not JsonObject nextObject)
                 {
                     array[arrayIndex.Value] = new JsonObject();
                     nextObject = (JsonObject)array[arrayIndex.Value]!;
                 }
-                
+
                 SetValueAtPath(nextObject, pathParts, valueNode, currentIndex + 1);
             }
             else
@@ -226,7 +224,7 @@ public class DictionaryToObjectConverter
                     nextNode = new JsonObject();
                     parent[currentPart] = nextNode;
                 }
-                
+
                 if (nextNode is JsonObject nextObject)
                 {
                     SetValueAtPath(nextObject, pathParts, valueNode, currentIndex + 1);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -19,14 +20,11 @@ public class ObjectToDictionaryConverter
     /// </summary>
     /// <param name="options"></param>
     public ObjectToDictionaryConverter(JsonSerializerOptions? options = null)
-    {
-        _serializerOptions = options
-            ?? new()
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                Converters = { new JsonStringEnumConverter() }
-            };
-    }
+        => _serializerOptions = options ?? new()
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Converters = { new JsonStringEnumConverter() }
+        };
 
     /// <summary>
     /// Преобразует объект в словарь строк в формате "путь:значение"
@@ -34,17 +32,25 @@ public class ObjectToDictionaryConverter
     /// <typeparam name="T">Тип преобразуемого объекта</typeparam>
     /// <param name="obj">Объект для преобразования</param>
     /// <returns>Словарь, где ключ - путь к свойству, значение - строковое представление значения</returns>
-    /// <exception cref="ArgumentNullException">Если передан null объект</exception>
     public Dictionary<string, string> Convert<T>(T? obj)
     {
         if (obj == null)
             return new();
 
         var dictionary = new Dictionary<string, string>();
-        using var jsonDoc = JsonSerializer.SerializeToDocument(obj, _serializerOptions);
+        using var jsonDoc = ConvertToJson(obj);
         ProcessElement(jsonDoc.RootElement, dictionary, "");
         return dictionary;
     }
+
+    /// <summary>
+    /// Преобразует объект в <see href="JsonDocument"/>
+    /// </summary>
+    /// <typeparam name="T">Тип преобразуемого объекта</typeparam>
+    /// <param name="obj">Объект для преобразования</param>
+    /// <returns></returns>
+    public JsonDocument ConvertToJson<T>(T? obj)
+        => JsonSerializer.SerializeToDocument(obj, _serializerOptions);
 
     /// <summary>
     /// Рекурсивно обрабатывает элемент JSON и добавляет его в словарь
@@ -62,8 +68,8 @@ public class ObjectToDictionaryConverter
                 case JsonValueKind.Object:
                     foreach (var property in element.EnumerateObject())
                     {
-                        var newPath = string.IsNullOrEmpty(currentPath) 
-                            ? property.Name 
+                        var newPath = string.IsNullOrEmpty(currentPath)
+                            ? property.Name
                             : $"{currentPath}:{property.Name}";
                         ProcessElement(property.Value, dictionary, newPath);
                     }
@@ -112,7 +118,7 @@ public class ObjectToDictionaryConverter
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Ошибка обработки пути '{currentPath}'", ex);
+            throw new SerializationException($"Ошибка обработки пути '{currentPath}'", ex);
         }
     }
 }

@@ -100,8 +100,8 @@ public class ObjectToDictionaryConverterTests
         var result = _converter.Convert(obj);
 
         // Assert
-        Assert.That(result["Path"], Is.EqualTo("C\\:\\\\Folder\\\\File.txt"));
-        Assert.That(result["Text"], Is.EqualTo("Line1\\nLine2"));
+        Assert.That(result["Path"], Is.EqualTo("C:\\Folder\\File.txt"));
+        Assert.That(result["Text"], Is.EqualTo("Line1\nLine2"));
     }
 
     [Test]
